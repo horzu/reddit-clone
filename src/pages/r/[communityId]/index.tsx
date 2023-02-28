@@ -4,6 +4,7 @@ import { doc, getDoc } from 'firebase/firestore';
 import { GetServerSidePropsContext } from 'next';
 import React from 'react';
 import safeJsonStringify from "safe-json-stringify";
+import NotFound from '@/src/components/Community/NotFound';
 
 type CommunityPageProps = {
     communityData: Community
@@ -12,7 +13,7 @@ type CommunityPageProps = {
 const CommunityPage: React.FC<CommunityPageProps> = ({ communityData }) => {
     if (!communityData) {
         return (
-            <div>Community Does not exist</div>
+            <NotFound />
         )
     }
 
