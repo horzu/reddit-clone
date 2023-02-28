@@ -5,6 +5,7 @@ import { GetServerSidePropsContext } from 'next';
 import React from 'react';
 import safeJsonStringify from "safe-json-stringify";
 import NotFound from '@/src/components/Community/NotFound';
+import Header from '@/src/components/Community/Header';
 
 type CommunityPageProps = {
     communityData: Community
@@ -17,7 +18,9 @@ const CommunityPage: React.FC<CommunityPageProps> = ({ communityData }) => {
         )
     }
 
-    return <div>Wellcome to {communityData.id}</div>
+    return (
+        <><Header communityData={communityData} /></>
+    )
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
