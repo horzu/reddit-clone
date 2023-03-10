@@ -1,7 +1,7 @@
 import { Post } from '@/src/atoms/postsAtom';
-import { Flex, Icon, Stack, Text, Image } from '@chakra-ui/react';
+import { Flex, Icon, Stack, Text, Image, Skeleton } from '@chakra-ui/react';
 import moment from 'moment';
-import React from 'react';
+import React, { useState } from 'react';
 import { AiOutlineDelete } from "react-icons/ai";
 import { BsChat, BsDot } from "react-icons/bs";
 import { FaReddit } from "react-icons/fa";
@@ -26,6 +26,7 @@ type PostItemProps = {
 };
 
 const PostItem: React.FC<PostItemProps> = ({ post, userIsCreator, userVoteValue, onVote, onDeletePost, onSelectPost }) => {
+    const [loadingImage, setLoadingImage] = useState(true)
 
     return (
         <Flex border="1px solid" bg="white" borderColor="gray.300" borderRadius={4} _hover={{ borderColor: "gray.500" }} cursor="pointer" onClick={onSelectPost}>
@@ -42,10 +43,12 @@ const PostItem: React.FC<PostItemProps> = ({ post, userIsCreator, userVoteValue,
                     </Stack>
                     <Text fontSize="12pt" fontWeight={600}>{post.title}</Text>
                     <Text fontSize="10pt">{post.body}</Text>
-                    {console.log(post.imageURL)}
                     {post.imageURL && (
                         <Flex justify="center" align="center" p={2}>
-                            <Image src={post.imageURL} maxWidth="460px" alt="Post Image" />
+                            {loadingImage && (
+                                <Skeleton height="200px" width="100%" borderRadius={4} />
+                            )}
+                            <Image src={post.imageURL} maxWidth="460px" alt="Post Image" display={loadingImage ? "none" : "unset"} onLoad={() => setLoadingImage(false)} />
                         </Flex>
                     )}
                 </Stack>
