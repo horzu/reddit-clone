@@ -1,36 +1,21 @@
-import {
-	collection,
-	doc,
-	getDoc,
-	getDocs,
-	increment,
-	writeBatch,
-} from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, increment, writeBatch } from "firebase/firestore";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { authModalState } from "../atoms/authModalAtom";
-import {
-	commmunityState,
-	Community,
-	CommunitySnippet,
-} from "../atoms/communitiesAtom";
+import { commmunityState, Community, CommunitySnippet } from "../atoms/communitiesAtom";
 import { auth, firestore } from "../firebase/clientApp";
 
 const useCommunityData = () => {
 	const [user] = useAuthState(auth);
 	const setAuthModalState = useSetRecoilState(authModalState);
-	const [communityStateValue, setCommunityStateValue] =
-		useRecoilState(commmunityState);
+	const [communityStateValue, setCommunityStateValue] = useRecoilState(commmunityState);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState("");
 	const router = useRouter();
 
-	const onJoiOrLeaveCommunity = (
-		communityData: Community,
-		isJoined: boolean
-	) => {
+	const onJoiOrLeaveCommunity = (communityData: Community, isJoined: boolean) => {
 		// is user signed in?
 		// if not => open auth modal
 		if (!user) {
@@ -50,9 +35,7 @@ const useCommunityData = () => {
 		setLoading(true);
 		try {
 			//get user snippets
-			const snippetDocs = await getDocs(
-				collection(firestore, `users/${user?.uid}/communitySnippets`)
-			);
+			const snippetDocs = await getDocs(collection(firestore, `users/${user?.uid}/communitySnippets`));
 
 			const snippets = snippetDocs.docs.map((doc) => ({ ...doc.data() }));
 			setCommunityStateValue((prev) => ({
@@ -76,16 +59,10 @@ const useCommunityData = () => {
 			const newSnippet: CommunitySnippet = {
 				communityId: communityData.id,
 				imageURL: communityData.imageURL || "",
+				isModerator: user?.uid === communityData.creatorId,
 			};
 
-			batch.set(
-				doc(
-					firestore,
-					`users/${user?.uid}/communitySnippets`,
-					communityData.id
-				),
-				newSnippet
-			);
+			batch.set(doc(firestore, `users/${user?.uid}/communitySnippets`, communityData.id), newSnippet);
 
 			// updating the numberOfMembers of the community (+1)
 			batch.update(doc(firestore, "communities", communityData.id), {
@@ -114,9 +91,7 @@ const useCommunityData = () => {
 			const batch = writeBatch(firestore);
 
 			// deleting a new community snippet
-			batch.delete(
-				doc(firestore, `users/${user?.uid}/communitySnippets`, communityId)
-			);
+			batch.delete(doc(firestore, `users/${user?.uid}/communitySnippets`, communityId));
 
 			// updating the numberOfMembers of the community (-1)
 			batch.update(doc(firestore, "communities", communityId), {
@@ -128,9 +103,7 @@ const useCommunityData = () => {
 			// update recoil state - communityState.mySnippets
 			setCommunityStateValue((prev) => ({
 				...prev,
-				mySnippets: prev.mySnippets.filter(
-					(item) => item.communityId !== communityId
-				),
+				mySnippets: prev.mySnippets.filter((item) => item.communityId !== communityId),
 			}));
 		} catch (error: any) {
 			console.log("leaveCommunity error: ", error.message);
