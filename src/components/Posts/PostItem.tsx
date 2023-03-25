@@ -11,6 +11,7 @@ import {
 	AlertIcon,
 } from "@chakra-ui/react";
 import moment from "moment";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { AiOutlineDelete } from "react-icons/ai";
@@ -29,14 +30,10 @@ type PostItemProps = {
 	post: Post;
 	userIsCreator: boolean;
 	userVoteValue?: number;
-	onVote: (
-		event: React.MouseEvent<SVGElement, MouseEvent>,
-		post: Post,
-		vote: number,
-		communityId: string
-	) => void;
+	onVote: (event: React.MouseEvent<SVGElement, MouseEvent>, post: Post, vote: number, communityId: string) => void;
 	onDeletePost: (post: Post) => Promise<boolean>;
 	onSelectPost?: (post: Post) => void;
+	homePage?: boolean;
 };
 
 const PostItem: React.FC<PostItemProps> = ({
@@ -46,6 +43,7 @@ const PostItem: React.FC<PostItemProps> = ({
 	onVote,
 	onDeletePost,
 	onSelectPost,
+	homePage,
 }) => {
 	const [loadingImage, setLoadingImage] = useState(true);
 	const [error, setError] = useState(false);
@@ -53,9 +51,7 @@ const PostItem: React.FC<PostItemProps> = ({
 	const router = useRouter();
 	const singlePostPage = !onSelectPost;
 
-	const handleDelete = async (
-		event: React.MouseEvent<HTMLDivElement, MouseEvent>
-	) => {
+	const handleDelete = async (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
 		event.stopPropagation();
 		setLoadingDelete(true);
 		try {
@@ -92,9 +88,7 @@ const PostItem: React.FC<PostItemProps> = ({
 				width="40px"
 				borderRadius={singlePostPage ? "0" : "3px 0px 0px 3px"}>
 				<Icon
-					as={
-						userVoteValue === 1 ? IoArrowUpCircleSharp : IoArrowUpCircleOutline
-					}
+					as={userVoteValue === 1 ? IoArrowUpCircleSharp : IoArrowUpCircleOutline}
 					color={userVoteValue === 1 ? "brand.100" : "gray.400"}
 					fontSize={22}
 					onClick={(event) => onVote(event, post, 1, post.communityId)}
@@ -102,58 +96,50 @@ const PostItem: React.FC<PostItemProps> = ({
 				/>
 				<Text fontSize="9pt">{post.voteStatus}</Text>
 				<Icon
-					as={
-						userVoteValue === -1
-							? IoArrowDownCircleSharp
-							: IoArrowDownCircleOutline
-					}
+					as={userVoteValue === -1 ? IoArrowDownCircleSharp : IoArrowDownCircleOutline}
 					color={userVoteValue === -1 ? "#4379ff" : "gray.400"}
 					fontSize={22}
 					onClick={(event) => onVote(event, post, -1, post.communityId)}
 					cursor="pointer"
 				/>
 			</Flex>
-			<Flex
-				direction="column"
-				width="100">
+			<Flex direction="column" width="100">
 				{error && (
 					<Alert status="error">
 						<AlertIcon />
 						<Text mr={2}>{error}</Text>
 					</Alert>
 				)}
-				<Stack
-					spacing={1}
-					padding="10px">
-					<Stack
-						direction="row"
-						spacing={0.6}
-						align="center"
-						fontSize="9pt">
+				<Stack spacing={1} padding="10px">
+					<Stack direction="row" spacing={0.6} align="center" fontSize="9pt">
 						{/* Home Page Check */}
+						{homePage && (
+							<>
+								{post.communityImageURL ? (
+									<Image src={post.communityImageURL} borderRadius="full" boxSize="18px" mr={2} />
+								) : (
+									<Icon as={FaReddit} fontSize="18pt" mr={1} color="blue.500" />
+								)}
+								<Link href={`r/${post.communityId}`}>
+									<Text
+										fontWeight={700}
+										_hover={{ textDecoration: "underline" }}
+										onClick={(event) => event.stopPropagation()}>{`r/${post.communityId}`}</Text>
+								</Link>
+								<Icon as={BsDot} color="gray.500" fontSize={8} />
+							</>
+						)}
 						<Text>
-							Posted by u/{post.creatorDisplayName}{" "}
-							{moment(new Date(post.createdAt?.seconds * 1000)).fromNow()}
+							Posted by u/{post.creatorDisplayName} {moment(new Date(post.createdAt?.seconds * 1000)).fromNow()}
 						</Text>
 					</Stack>
-					<Text
-						fontSize="12pt"
-						fontWeight={600}>
+					<Text fontSize="12pt" fontWeight={600}>
 						{post.title}
 					</Text>
 					<Text fontSize="10pt">{post.body}</Text>
 					{post.imageURL && (
-						<Flex
-							justify="center"
-							align="center"
-							p={2}>
-							{loadingImage && (
-								<Skeleton
-									height="200px"
-									width="100%"
-									borderRadius={4}
-								/>
-							)}
+						<Flex justify="center" align="center" p={2}>
+							{loadingImage && <Skeleton height="200px" width="100%" borderRadius={4} />}
 							<Image
 								src={post.imageURL}
 								maxWidth="460px"
@@ -164,44 +150,17 @@ const PostItem: React.FC<PostItemProps> = ({
 						</Flex>
 					)}
 				</Stack>
-				<Flex
-					ml={1}
-					mb={0.5}
-					color="gray.500">
-					<Flex
-						align="center"
-						p="8px 10px"
-						borderRadius={4}
-						_hover={{ bg: "gray.200" }}
-						cursor="pointer">
-						<Icon
-							as={BsChat}
-							mr={2}
-						/>
+				<Flex ml={1} mb={0.5} color="gray.500">
+					<Flex align="center" p="8px 10px" borderRadius={4} _hover={{ bg: "gray.200" }} cursor="pointer">
+						<Icon as={BsChat} mr={2} />
 						<Text fontSize="9pt">{post.numberOfComments}</Text>
 					</Flex>
-					<Flex
-						align="center"
-						p="8px 10px"
-						borderRadius={4}
-						_hover={{ bg: "gray.200" }}
-						cursor="pointer">
-						<Icon
-							as={IoArrowRedoOutline}
-							mr={2}
-						/>
+					<Flex align="center" p="8px 10px" borderRadius={4} _hover={{ bg: "gray.200" }} cursor="pointer">
+						<Icon as={IoArrowRedoOutline} mr={2} />
 						<Text fontSize="9pt">Share</Text>
 					</Flex>
-					<Flex
-						align="center"
-						p="8px 10px"
-						borderRadius={4}
-						_hover={{ bg: "gray.200" }}
-						cursor="pointer">
-						<Icon
-							as={IoBookmarkOutline}
-							mr={2}
-						/>
+					<Flex align="center" p="8px 10px" borderRadius={4} _hover={{ bg: "gray.200" }} cursor="pointer">
+						<Icon as={IoBookmarkOutline} mr={2} />
 						<Text fontSize="9pt">Save</Text>
 					</Flex>
 					{userIsCreator && (
@@ -216,10 +175,7 @@ const PostItem: React.FC<PostItemProps> = ({
 								<Spinner size="sm" />
 							) : (
 								<>
-									<Icon
-										as={AiOutlineDelete}
-										mr={2}
-									/>
+									<Icon as={AiOutlineDelete} mr={2} />
 									<Text fontSize="9pt">Delete</Text>
 								</>
 							)}
