@@ -5,13 +5,13 @@ import PageContent from "@/src/components/Layout/PageContent";
 import NewPostForm from "@/src/components/Posts/NewPostForm";
 import { auth } from "@/src/firebase/clientApp";
 import { useRecoilValue } from "recoil";
-import { commmunityState } from "@/src/atoms/communitiesAtom";
+import { communityState } from "@/src/atoms/communitiesAtom";
 import About from "@/src/components/Community/About";
 import useCommunityData from "@/src/hooks/useCommunityData";
 
 const SubmitPostPage: React.FC = () => {
 	const [user] = useAuthState(auth);
-	// const setCommunityStateValue = useRecoilValue(commmunityState);
+	// const setCommunityStateValue = useRecoilValue(communityState);
 	const { communityStateValue } = useCommunityData();
 	console.log(communityStateValue);
 

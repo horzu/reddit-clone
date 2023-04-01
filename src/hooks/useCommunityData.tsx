@@ -4,13 +4,13 @@ import React, { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { authModalState } from "../atoms/authModalAtom";
-import { commmunityState, Community, CommunitySnippet } from "../atoms/communitiesAtom";
+import { communityState, Community, CommunitySnippet } from "../atoms/communitiesAtom";
 import { auth, firestore } from "../firebase/clientApp";
 
 const useCommunityData = () => {
 	const [user] = useAuthState(auth);
 	const setAuthModalState = useSetRecoilState(authModalState);
-	const [communityStateValue, setCommunityStateValue] = useRecoilState(commmunityState);
+	const [communityStateValue, setCommunityStateValue] = useRecoilState(communityState);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState("");
 	const router = useRouter();
@@ -41,6 +41,7 @@ const useCommunityData = () => {
 			setCommunityStateValue((prev) => ({
 				...prev,
 				mySnippets: snippets as CommunitySnippet[],
+				snippetsFetched: true,
 			}));
 		} catch (error: any) {
 			console.log("getMySnippets error", error);
@@ -134,6 +135,7 @@ const useCommunityData = () => {
 			setCommunityStateValue((prev) => ({
 				...prev,
 				mySnippets: [],
+				snippetsFetched: false,
 			}));
 			return;
 		}

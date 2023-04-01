@@ -13,7 +13,7 @@ import React, { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { authModalState } from "../atoms/authModalAtom";
-import { commmunityState } from "../atoms/communitiesAtom";
+import { communityState } from "../atoms/communitiesAtom";
 import { Post, postState, PostVote } from "../atoms/postsAtom";
 import { auth, firestore, storage } from "../firebase/clientApp";
 
@@ -21,7 +21,7 @@ const usePosts = () => {
 	const [user] = useAuthState(auth);
 	const router = useRouter();
 	const [postStateValue, setPostStateValue] = useRecoilState(postState);
-	const currentCommunity = useRecoilValue(commmunityState).currentCommunity;
+	const currentCommunity = useRecoilValue(communityState).currentCommunity;
 	const setAuthModalState = useSetRecoilState(authModalState);
 
 	const onVote = async (
@@ -39,9 +39,7 @@ const usePosts = () => {
 
 		try {
 			const { voteStatus } = post;
-			const existingVote = postStateValue.postVotes.find(
-				(vote) => vote.postId === post.id
-			);
+			const existingVote = postStateValue.postVotes.find((vote) => vote.postId === post.id);
 
 			const batch = writeBatch(firestore);
 			const updatedPost = { ...post };
@@ -52,9 +50,7 @@ const usePosts = () => {
 			// New vote
 			if (!existingVote) {
 				// create a new postVote document
-				const postVoteRef = doc(
-					collection(firestore, "users", `${user?.uid}/postVotes`)
-				);
+				const postVoteRef = doc(collection(firestore, "users", `${user?.uid}/postVotes`));
 
 				const newVote: PostVote = {
 					id: postVoteRef.id,
@@ -71,19 +67,13 @@ const usePosts = () => {
 
 				// existing vote - user has voted on the post before
 			} else {
-				const postVoteRef = doc(
-					firestore,
-					"users",
-					`${user?.uid}/postVotes/${existingVote.id}`
-				);
+				const postVoteRef = doc(firestore, "users", `${user?.uid}/postVotes/${existingVote.id}`);
 
 				// User removing their vote (up => neutral or down=> neutral)
 				if (existingVote.voteValue === vote) {
 					// add or subtract 1 to/from post.voteStatus
 					updatedPost.voteStatus = voteStatus - vote;
-					updatedPostVotes = updatedPostVotes.filter(
-						(vote) => vote.id !== existingVote.id
-					);
+					updatedPostVotes = updatedPostVotes.filter((vote) => vote.id !== existingVote.id);
 
 					// delete the postVote document
 					batch.delete(postVoteRef);
@@ -94,9 +84,7 @@ const usePosts = () => {
 					// add or subtract 2 to/from post.voteStatus
 					updatedPost.voteStatus = voteStatus + 2 * vote;
 
-					const voteIndex = postStateValue.postVotes.findIndex(
-						(vote) => vote.id === existingVote.id
-					);
+					const voteIndex = postStateValue.postVotes.findIndex((vote) => vote.id === existingVote.id);
 
 					updatedPostVotes[voteIndex] = {
 						...existingVote,
@@ -113,9 +101,7 @@ const usePosts = () => {
 			}
 
 			// update state with updated values
-			const postIdx = postStateValue.posts.findIndex(
-				(item) => item.id === post.id
-			);
+			const postIdx = postStateValue.posts.findIndex((item) => item.id === post.id);
 			updatedPosts[postIdx] = updatedPost;
 
 			setPostStateValue((prev) => ({

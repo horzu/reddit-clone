@@ -1,4 +1,4 @@
-import { commmunityState, Community } from "../../../atoms/communitiesAtom";
+import { communityState, Community } from "../../../atoms/communitiesAtom";
 import { firestore } from "@/src/firebase/clientApp";
 import { doc, getDoc } from "firebase/firestore";
 import { GetServerSidePropsContext } from "next";
@@ -18,7 +18,7 @@ type CommunityPageProps = {
 
 const CommunityPage: React.FC<CommunityPageProps> = ({ communityData }) => {
 	console.log("here is data: ", communityData);
-	const setCommunityStateValue = useSetRecoilState(commmunityState);
+	const setCommunityStateValue = useSetRecoilState(communityState);
 
 	if (!communityData) {
 		return <NotFound />;
