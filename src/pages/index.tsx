@@ -13,6 +13,9 @@ import PostLoader from "../components/Posts/PostLoader";
 import { auth, firestore } from "../firebase/clientApp";
 import useCommunityData from "../hooks/useCommunityData";
 import usePosts from "../hooks/usePosts";
+import Recommendations from "../components/Community/Recommendations";
+import Premium from "../components/Community/Premium";
+import PersonalHome from "../components/Community/PersonalHome";
 
 const Home: NextPage = () => {
 	const [user, loadingUser] = useAuthState(auth);
@@ -126,7 +129,11 @@ const Home: NextPage = () => {
 					</Stack>
 				)}
 			</>
-			<>{/* Recommendations */}</>
+			<Stack spacing={5}>
+				<Recommendations />
+				<Premium />
+				<PersonalHome />
+			</Stack>
 		</PageContent>
 	);
 };
