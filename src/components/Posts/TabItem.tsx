@@ -1,9 +1,9 @@
 import { Flex, Icon, Text } from '@chakra-ui/react';
 import React from 'react';
-import { TabItem } from "./NewPostForm";
+import { TabItemComponent } from "./NewPostForm";
 
 type TabItemProps = {
-	item: TabItem;
+	item: TabItemComponent;
 	selected: boolean;
 	setSelectedTab: (value: string) => void;
 };
