@@ -30,7 +30,7 @@ const Recommendations: React.FC = () => {
 	}, []);
 
 	return (
-		<Flex direction="column" bg="white" borderRadius={4} border="1px solid" borderColor="gray.300">
+		<Flex direction="column" bg="white" borderRadius={4} cursor="pointer" border="1px solid" borderColor="gray.300">
 			<Flex
 				align="flex-end"
 				color="white"
@@ -64,43 +64,47 @@ const Recommendations: React.FC = () => {
 						{communities.map((item, index) => {
 							const isJoined = !!communityStateValue.mySnippets.find((snippet) => snippet.communityId === item.id);
 							return (
-								<Link key={item.id} href={`/r/${item.id}`}>
-									<Flex
-										align="center"
-										fontSize="10pt"
-										borderBottom="1px solid"
-										borderColor="gray.200"
-										p="10px 12px"
-										position="relative">
-										<Flex width="80%" align="center">
-											<Flex width="15%">
-												<Text>{index + 1}</Text>
-											</Flex>
-											<Flex align="center" width="80%">
-												{item.imageURL ? (
-													<Image src={item.imageURL} borderRadius="full" boxSize="28px" mr={2} />
-												) : (
-													<Icon as={FaReddit} fontSize={30} color="brand.100" mr={2} />
-												)}
-												<span style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-													{`r/${item.id}`}
-												</span>
-											</Flex>
+								<Flex
+									key={item.id}
+									align="center"
+									fontSize="10pt"
+									borderBottom="1px solid"
+									borderColor="gray.200"
+									p="10px 12px"
+									position="relative"
+									cursor="default">
+									<Flex width="80%" align="center">
+										<Flex width="15%">
+											<Text>{index + 1}</Text>
 										</Flex>
-										<Box position="absolute" right="10px">
-											<Button
-												height="22px"
-												fontSize="8pt"
-												variant={isJoined ? "outline" : "solid"}
-												onClick={(event) => {
-													event.stopPropagation();
-													onJoiOrLeaveCommunity(item, isJoined);
-												}}>
-												{isJoined ? "Joined" : "Join"}
-											</Button>
-										</Box>
+										<Flex align="center" width="80%">
+											<Link href={`/r/${item.id}`}>
+												<Flex align="center" width="100%">
+													{item.imageURL ? (
+														<Image src={item.imageURL} borderRadius="full" boxSize="28px" mr={2} />
+													) : (
+														<Icon as={FaReddit} fontSize={30} color="brand.100" mr={2} />
+													)}
+													<span style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+														{`r/${item.id}`}
+													</span>
+												</Flex>
+											</Link>
+										</Flex>
 									</Flex>
-								</Link>
+									<Box position="absolute" right="10px">
+										<Button
+											height="22px"
+											fontSize="8pt"
+											variant={isJoined ? "outline" : "solid"}
+											onClick={(event) => {
+												event.stopPropagation();
+												onJoiOrLeaveCommunity(item, isJoined);
+											}}>
+											{isJoined ? "Joined" : "Join"}
+										</Button>
+									</Box>
+								</Flex>
 							);
 						})}
 						<Box p="10px 12px">

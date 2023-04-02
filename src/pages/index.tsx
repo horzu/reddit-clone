@@ -121,7 +121,7 @@ const Home: NextPage = () => {
 								onSelectPost={onSelectPost}
 								onDeletePost={onDeletePost}
 								onVote={onVote}
-								userVoteValue={postStateValue.postVotes.find((item) => item.id === post.id)?.voteValue}
+								userVoteValue={postStateValue.postVotes.find((item) => item.postId === post.id)?.voteValue}
 								userIsCreator={user?.uid === post.creatorId}
 								homePage
 							/>
